@@ -2,5 +2,4 @@
 
 # Additional privileged files
 /CODEOWNERS @jeff-mccoy @mikevanhemert @austenbryan
-/cosign.pub @jeff-mccoy @mikevanhemert @austenbryan
-/LICENSE @jeff-mccoy @mikevanhemert @austenbryan
+/LICENSE @jeff-mccoy @austenbryan
