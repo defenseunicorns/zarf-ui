@@ -17,6 +17,7 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 )
 
+// Labels are the Kubernetes labels applied to resources by Zarf
 var Labels = k8s.Labels{
 	config.ZarfManagedByLabel: "zarf",
 }
