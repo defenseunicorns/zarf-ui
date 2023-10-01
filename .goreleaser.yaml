@@ -1,0 +1,87 @@
+before:
+  hooks:
+    - go mod tidy
+
+# Build a universal macOS binary
+universal_binaries:
+  - replace: false
+
+# Build the different combination of goos/arch binaries
+builds:
+  - env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+    ldflags:
+      - -s -w -X github.com/defenseunicorns/zarf/src/config.CLIVersion={{.Tag}} -X k8s.io/component-base/version.gitVersion=v0.0.0+zarf{{.Tag}} -X k8s.io/component-base/version.gitCommit={{.FullCommit}} -X k8s.io/component-base/version.buildDate={{.Date}}
+    goarch:
+      - amd64
+      - arm64
+
+# Save the built artifacts as binaries (instead of wrapping them in a tarball)
+archives:
+  - format: binary
+    name_template: "{{ .ProjectName }}_{{ .Tag }}_{{- title .Os }}_{{ .Arch }}"
+
+# generate a sha256 checksum of all release artifacts
+# NOTE: We are explicitly adding the init-packages that are built prior to GoReleaser stage in the GitHub Actions workflow
+checksum:
+  name_template: "checksums.txt"
+  extra_files:
+    - glob: ./build/zarf-init-*
+  algorithm: sha256
+
+# generate sboms for each binary artifact
+sboms:
+  - artifacts: binary
+    documents:
+      - "sbom_{{ .ProjectName }}_{{ .Tag }}_{{- title .Os }}_{{ .Arch }}.sbom"
+
+snapshot:
+  name_template: "{{ incpatch .Version }}-snapshot"
+
+# Use the auto-generated changlog github provides
+changelog:
+  use: github-native
+
+# Generate a GitHub release and publish the release for the tag
+# NOTE: We are explicitly adding the init-packages that are built prior to GoReleaser stage in the GitHub Actions workflow
+release:
+  github:
+    owner: defenseunicorns
+    name: zarf
+  prerelease: auto
+  mode: append
+  extra_files:
+    - glob: ./build/zarf-init-*
+
+# Update the 'generic' brew formula and create a versioned brew formula for artifacts from this release
+brews:
+  - name: "{{ .Env.BREW_NAME }}"
+    tap:
+      owner: defenseunicorns
+      name: homebrew-tap
+      token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
+    commit_msg_template: "Brew formula update for {{ .ProjectName }} version {{ .Tag }}"
+    homepage: "https://zarf.dev/"
+    description: "DevSecOps for Air Gap"
+
+  # NOTE: We are using .Version instead of .Tag because homebrew has weird semver parsing rules and won't be able to
+  #       install versioned releases that has a `v` character before the version number.
+  - name: "zarf@{{ .Version }}"
+    tap:
+      owner: defenseunicorns
+      name: homebrew-tap
+      token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
+    commit_msg_template: "Brew formula update for {{ .ProjectName }} versioned release {{ .Tag }}"
+    homepage: "https://zarf.dev/"
+    description: "DevSecOps for Air Gap"
+
+# Upload artifact backups to s3
+blobs:
+  - provider: s3
+    region: us-gov-west-1
+    bucket: zarf-public
+    folder: "release/{{.Version}}"
