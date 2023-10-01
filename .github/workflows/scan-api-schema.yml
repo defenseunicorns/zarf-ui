@@ -1,4 +1,4 @@
-name: Validate Docs and Schema
+name: Validate API Schema
 on:
   pull_request:
 
@@ -16,7 +16,7 @@ jobs:
         uses: ./.github/actions/golang
 
       - name: Docs and schemas
-        run: "make test-docs-and-schema"
+        run: "make test-api-schema"
 
       - name: Save logs
         if: always()
