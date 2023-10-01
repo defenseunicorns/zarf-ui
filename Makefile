@@ -124,7 +124,12 @@ lint-go: ## Run revive to lint the go code (must `brew install revive` first)
 	revive -config revive.toml -exclude src/cmd/viper.go -formatter stylish ./src/...
 
 api-schema: ensure-ui-build-dir ## Generate the Zarf UI API Schema
-	ZARF_CONFIG=hack/empty-config.toml hack/create-zarf-schema.sh
+	ZARF_CONFIG=hack/empty-config.toml hack/create-api-schema.sh
+
+# INTERNAL: used to test that a dev has ran `make api-schema` in their PR
+test-api-schema:
+	$(MAKE) api-schema
+	hack/check-api-schema.sh
 
 retrieve-packages: ensure-ui-build-dir ## Retrieve published test packages (can also be built from the Zarf repo)
 	@test -s $(ZARF_UI_BIN) || $(MAKE) build-ui

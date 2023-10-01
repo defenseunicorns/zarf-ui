@@ -310,8 +310,7 @@ export interface ZarfComponent {
      */
     files?: ZarfFile[];
     /**
-     * [Deprecated] Create a user selector field based on all components in the same group. This
-     * will be removed in Zarf v1.0.0.
+     * Create a user selector field based on all components in the same group
      */
     group?: string;
     /**
@@ -459,11 +458,6 @@ export interface ZarfComponentActionSetVariable {
      * The name to be used for the variable
      */
     name: string;
-    /**
-     * An optional regex pattern that a variable value must match before a package deployment
-     * can continue.
-     */
-    pattern?: string;
     /**
      * Whether to mark this variable as sensitive to not print it in the Zarf log
      */
@@ -886,11 +880,6 @@ export interface ZarfPackageConstant {
      */
     name: string;
     /**
-     * An optional regex pattern that a constant value must match before a package can be
-     * created.
-     */
-    pattern?: string;
-    /**
      * The value to set for the constant during deploy
      */
     value: string;
@@ -985,11 +974,6 @@ export interface ZarfPackageVariable {
      */
     name: string;
     /**
-     * An optional regex pattern that a variable value must match before a package can be
-     * deployed.
-     */
-    pattern?: string;
-    /**
      * Whether to prompt the user for input for this variable
      */
     prompt?: boolean;
@@ -1008,12 +992,12 @@ export interface ClusterSummary {
     distro:      string;
     hasZarf:     boolean;
     k8sRevision: string;
-    rawConfig:   Config;
+    rawConfig:   RawConfigClass;
     reachable:   boolean;
     zarfState:   ZarfState;
 }
 
-export interface Config {
+export interface RawConfigClass {
     apiVersion?:       string;
     clusters:          { [key: string]: Cluster };
     contexts:          { [key: string]: Context };
@@ -1030,16 +1014,18 @@ export interface Cluster {
     "disable-compression"?:        boolean;
     extensions?:                   { [key: string]: any[] | boolean | number | number | { [key: string]: any } | null | string };
     "insecure-skip-tls-verify"?:   boolean;
+    LocationOfOrigin:              string;
     "proxy-url"?:                  string;
     server:                        string;
     "tls-server-name"?:            string;
 }
 
 export interface Context {
-    cluster:     string;
-    extensions?: { [key: string]: any[] | boolean | number | number | { [key: string]: any } | null | string };
-    namespace?:  string;
-    user:        string;
+    cluster:          string;
+    extensions?:      { [key: string]: any[] | boolean | number | number | { [key: string]: any } | null | string };
+    LocationOfOrigin: string;
+    namespace?:       string;
+    user:             string;
 }
 
 export interface Preferences {
@@ -1059,6 +1045,7 @@ export interface AuthInfo {
     "client-key-data"?:         string;
     exec?:                      ExecConfig;
     extensions?:                { [key: string]: any[] | boolean | number | number | { [key: string]: any } | null | string };
+    LocationOfOrigin:           string;
     password?:                  string;
     token?:                     string;
     tokenFile?:                 string;
@@ -1071,13 +1058,16 @@ export interface AuthProviderConfig {
 }
 
 export interface ExecConfig {
-    apiVersion?:        string;
-    args:               string[];
-    command:            string;
-    env:                ExecEnvVar[];
-    installHint?:       string;
-    interactiveMode?:   string;
-    provideClusterInfo: boolean;
+    apiVersion?:             string;
+    args:                    string[];
+    command:                 string;
+    Config:                  any[] | boolean | number | number | { [key: string]: any } | null | string;
+    env:                     ExecEnvVar[];
+    installHint?:            string;
+    InteractiveMode:         string;
+    provideClusterInfo:      boolean;
+    StdinUnavailable:        boolean;
+    StdinUnavailableMessage: string;
 }
 
 export interface ExecEnvVar {
@@ -1539,7 +1529,6 @@ const typeMap: any = {
     "ZarfComponentActionSetVariable": o([
         { json: "autoIndent", js: "autoIndent", typ: u(undefined, true) },
         { json: "name", js: "name", typ: "" },
-        { json: "pattern", js: "pattern", typ: u(undefined, "") },
         { json: "sensitive", js: "sensitive", typ: u(undefined, true) },
         { json: "type", js: "type", typ: u(undefined, r("Type")) },
     ], false),
@@ -1644,7 +1633,6 @@ const typeMap: any = {
         { json: "autoIndent", js: "autoIndent", typ: u(undefined, true) },
         { json: "description", js: "description", typ: u(undefined, "") },
         { json: "name", js: "name", typ: "" },
-        { json: "pattern", js: "pattern", typ: u(undefined, "") },
         { json: "value", js: "value", typ: "" },
     ], false),
     "ZarfMetadata": o([
@@ -1667,7 +1655,6 @@ const typeMap: any = {
         { json: "default", js: "default", typ: u(undefined, "") },
         { json: "description", js: "description", typ: u(undefined, "") },
         { json: "name", js: "name", typ: "" },
-        { json: "pattern", js: "pattern", typ: u(undefined, "") },
         { json: "prompt", js: "prompt", typ: u(undefined, true) },
         { json: "sensitive", js: "sensitive", typ: u(undefined, true) },
         { json: "type", js: "type", typ: u(undefined, r("Type")) },
@@ -1676,11 +1663,11 @@ const typeMap: any = {
         { json: "distro", js: "distro", typ: "" },
         { json: "hasZarf", js: "hasZarf", typ: true },
         { json: "k8sRevision", js: "k8sRevision", typ: "" },
-        { json: "rawConfig", js: "rawConfig", typ: r("Config") },
+        { json: "rawConfig", js: "rawConfig", typ: r("RawConfigClass") },
         { json: "reachable", js: "reachable", typ: true },
         { json: "zarfState", js: "zarfState", typ: r("ZarfState") },
     ], false),
-    "Config": o([
+    "RawConfigClass": o([
         { json: "apiVersion", js: "apiVersion", typ: u(undefined, "") },
         { json: "clusters", js: "clusters", typ: m(r("Cluster")) },
         { json: "contexts", js: "contexts", typ: m(r("Context")) },
@@ -1696,6 +1683,7 @@ const typeMap: any = {
         { json: "disable-compression", js: "disable-compression", typ: u(undefined, true) },
         { json: "extensions", js: "extensions", typ: u(undefined, m(u(a("any"), true, 3.14, 0, m("any"), null, ""))) },
         { json: "insecure-skip-tls-verify", js: "insecure-skip-tls-verify", typ: u(undefined, true) },
+        { json: "LocationOfOrigin", js: "LocationOfOrigin", typ: "" },
         { json: "proxy-url", js: "proxy-url", typ: u(undefined, "") },
         { json: "server", js: "server", typ: "" },
         { json: "tls-server-name", js: "tls-server-name", typ: u(undefined, "") },
@@ -1703,6 +1691,7 @@ const typeMap: any = {
     "Context": o([
         { json: "cluster", js: "cluster", typ: "" },
         { json: "extensions", js: "extensions", typ: u(undefined, m(u(a("any"), true, 3.14, 0, m("any"), null, ""))) },
+        { json: "LocationOfOrigin", js: "LocationOfOrigin", typ: "" },
         { json: "namespace", js: "namespace", typ: u(undefined, "") },
         { json: "user", js: "user", typ: "" },
     ], false),
@@ -1722,6 +1711,7 @@ const typeMap: any = {
         { json: "client-key-data", js: "client-key-data", typ: u(undefined, "") },
         { json: "exec", js: "exec", typ: u(undefined, r("ExecConfig")) },
         { json: "extensions", js: "extensions", typ: u(undefined, m(u(a("any"), true, 3.14, 0, m("any"), null, ""))) },
+        { json: "LocationOfOrigin", js: "LocationOfOrigin", typ: "" },
         { json: "password", js: "password", typ: u(undefined, "") },
         { json: "token", js: "token", typ: u(undefined, "") },
         { json: "tokenFile", js: "tokenFile", typ: u(undefined, "") },
@@ -1735,10 +1725,13 @@ const typeMap: any = {
         { json: "apiVersion", js: "apiVersion", typ: u(undefined, "") },
         { json: "args", js: "args", typ: a("") },
         { json: "command", js: "command", typ: "" },
+        { json: "Config", js: "Config", typ: u(a("any"), true, 3.14, 0, m("any"), null, "") },
         { json: "env", js: "env", typ: a(r("ExecEnvVar")) },
         { json: "installHint", js: "installHint", typ: u(undefined, "") },
-        { json: "interactiveMode", js: "interactiveMode", typ: u(undefined, "") },
+        { json: "InteractiveMode", js: "InteractiveMode", typ: "" },
         { json: "provideClusterInfo", js: "provideClusterInfo", typ: true },
+        { json: "StdinUnavailable", js: "StdinUnavailable", typ: true },
+        { json: "StdinUnavailableMessage", js: "StdinUnavailableMessage", typ: "" },
     ], false),
     "ExecEnvVar": o([
         { json: "name", js: "name", typ: "" },
