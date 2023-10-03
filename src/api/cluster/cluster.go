@@ -10,10 +10,11 @@ import (
 	"time"
 
 	"github.com/defenseunicorns/zarf-ui/src/api/common"
+	"github.com/defenseunicorns/zarf-ui/src/types"
 	"github.com/defenseunicorns/zarf/src/config"
 	"github.com/defenseunicorns/zarf/src/pkg/k8s"
 	"github.com/defenseunicorns/zarf/src/pkg/message"
-	"github.com/defenseunicorns/zarf/src/types"
+	zTypes "github.com/defenseunicorns/zarf/src/types"
 	"k8s.io/client-go/tools/clientcmd"
 )
 
@@ -26,7 +27,7 @@ var Labels = k8s.Labels{
 func Summary(w http.ResponseWriter, _ *http.Request) {
 	message.Debug("cluster.Summary()")
 
-	var state *types.ZarfState
+	var state *zTypes.ZarfState
 	var reachable bool
 	var distro string
 	var hasZarf bool
@@ -43,7 +44,7 @@ func Summary(w http.ResponseWriter, _ *http.Request) {
 		k8sRevision, _ = k.GetServerVersion()
 	}
 
-	data := types.ClusterSummary{
+	data := types.APIClusterSummary{
 		Reachable:   reachable,
 		HasZarf:     hasZarf,
 		Distro:      distro,
@@ -55,7 +56,7 @@ func Summary(w http.ResponseWriter, _ *http.Request) {
 	common.WriteJSONResponse(w, data, http.StatusOK)
 }
 
-func loadZarfState(k *k8s.K8s) (state *types.ZarfState, err error) {
+func loadZarfState(k *k8s.K8s) (state *zTypes.ZarfState, err error) {
 	secret, err := k.GetSecret("zarf", "zarf-state")
 	if err != nil {
 		return nil, err

@@ -14,7 +14,7 @@ import (
 	"github.com/defenseunicorns/zarf/src/config/lang"
 	"github.com/defenseunicorns/zarf/src/pkg/k8s"
 	"github.com/defenseunicorns/zarf/src/pkg/message"
-	"github.com/defenseunicorns/zarf/src/types"
+	zTypes "github.com/defenseunicorns/zarf/src/types"
 	"github.com/go-chi/chi"
 )
 
@@ -22,7 +22,7 @@ import (
 func ListDeployedComponents(w http.ResponseWriter, r *http.Request) {
 	pkgName := chi.URLParam(r, "pkg")
 
-	var deployedPackage = types.DeployedPackage{}
+	var deployedPackage = zTypes.DeployedPackage{}
 
 	k, err := k8s.New(message.Debugf, cluster.Labels)
 	if err != nil {

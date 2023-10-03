@@ -10,7 +10,7 @@ import (
 	"runtime"
 
 	"github.com/Masterminds/semver/v3"
-	config "github.com/defenseunicorns/zarf-ui/src/config"
+	"github.com/defenseunicorns/zarf-ui/src/config"
 	zConfig "github.com/defenseunicorns/zarf/src/config"
 	"github.com/defenseunicorns/zarf/src/config/lang"
 	"github.com/spf13/cobra"

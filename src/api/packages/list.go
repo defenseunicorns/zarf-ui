@@ -15,7 +15,7 @@ import (
 	"github.com/defenseunicorns/zarf/src/config"
 	"github.com/defenseunicorns/zarf/src/pkg/k8s"
 	"github.com/defenseunicorns/zarf/src/pkg/message"
-	"github.com/defenseunicorns/zarf/src/types"
+	zTypes "github.com/defenseunicorns/zarf/src/types"
 )
 
 // ListDeployedPackages writes a list of packages that have been deployed to the connected cluster.
@@ -27,7 +27,7 @@ func ListDeployedPackages(w http.ResponseWriter, _ *http.Request) {
 		return
 	}
 
-	var deployedPackages = []types.DeployedPackage{}
+	var deployedPackages = []zTypes.DeployedPackage{}
 	var errorList []error
 	// Get the secrets that describe the deployed packages
 	secrets, err := k.GetSecretsWithLabel("zarf", "package-deploy-info")
@@ -39,7 +39,7 @@ func ListDeployedPackages(w http.ResponseWriter, _ *http.Request) {
 	// Process the k8s secret into our internal structs
 	for _, secret := range secrets.Items {
 		if strings.HasPrefix(secret.Name, config.ZarfPackagePrefix) {
-			var deployedPackage types.DeployedPackage
+			var deployedPackage zTypes.DeployedPackage
 			err := json.Unmarshal(secret.Data["data"], &deployedPackage)
 			// add the error to the error list
 			if err != nil {

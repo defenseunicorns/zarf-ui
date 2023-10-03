@@ -18,10 +18,11 @@ import (
 	"github.com/defenseunicorns/zarf-ui/src/api/components"
 	"github.com/defenseunicorns/zarf-ui/src/api/packages"
 	"github.com/defenseunicorns/zarf-ui/src/config"
-	zConfig "github.com/defenseunicorns/zarf/src/config"
+	"github.com/defenseunicorns/zarf/src/pkg/layout"
 	"github.com/defenseunicorns/zarf/src/pkg/message"
 	"github.com/defenseunicorns/zarf/src/pkg/utils"
 	"github.com/defenseunicorns/zarf/src/pkg/utils/exec"
+	"github.com/defenseunicorns/zarf/src/pkg/utils/helpers"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -39,11 +40,19 @@ func LaunchAPIServer() {
 	// Otherwise, use a random available port
 	if port == "" {
 		// If we can't find an available port, just use the default
-		if portRaw, err := utils.GetAvailablePort(); err != nil {
+		if portRaw, err := helpers.GetAvailablePort(); err != nil {
 			port = "8080"
 		} else {
 			port = fmt.Sprintf("%d", portRaw)
 		}
+	}
+
+	ip := "127.0.0.1"
+
+	// Track the external IP if it's set
+	externalIP := os.Getenv("API_EXTERNAL_IP")
+	if externalIP != "" {
+		ip = externalIP
 	}
 
 	// If the env variable API_TOKEN is set, use that for the API secret
@@ -106,16 +115,16 @@ func LaunchAPIServer() {
 
 	// If no dev port specified, use the server port for the URL and try to open it
 	if devPort == "" {
-		url := fmt.Sprintf("http://127.0.0.1:%s/auth?token=%s", port, token)
+		url := fmt.Sprintf("http://%s:%s/auth?token=%s", ip, port, token)
 		message.Infof("Zarf UI connection: %s", url)
 		message.Debug(exec.LaunchURL(url))
 	} else {
 		// Otherwise, use the dev port for the URL and don't try to open
-		message.Infof("Zarf UI connection: http://127.0.0.1:%s/auth?token=%s", devPort, token)
+		message.Infof("Zarf UI connection: http://%s:%s/auth?token=%s", ip, devPort, token)
 	}
 
 	// Setup the static SBOM server
-	sbomSub := os.DirFS(zConfig.ZarfSBOMDir)
+	sbomSub := os.DirFS(layout.SBOMDir)
 	sbomFs := http.FileServer(http.FS(sbomSub))
 
 	// Serve the SBOM viewer files

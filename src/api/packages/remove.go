@@ -10,7 +10,7 @@ import (
 	"github.com/defenseunicorns/zarf-ui/src/api/common"
 	"github.com/defenseunicorns/zarf/src/pkg/message"
 	"github.com/defenseunicorns/zarf/src/pkg/packager"
-	"github.com/defenseunicorns/zarf/src/types"
+	zTypes "github.com/defenseunicorns/zarf/src/types"
 	"github.com/go-chi/chi/v5"
 )
 
@@ -23,10 +23,10 @@ func RemovePackage(w http.ResponseWriter, r *http.Request) {
 	name := chi.URLParam(r, "name")
 
 	// Setup the packager
-	pkg, err := packager.New(&types.PackagerConfig{
-		PkgOpts: types.ZarfPackageOptions{
+	pkg, err := packager.New(&zTypes.PackagerConfig{
+		PkgOpts: zTypes.ZarfPackageOptions{
 			OptionalComponents: components,
-			PackagePath:        name,
+			PackageSource:      name,
 		},
 	})
 	defer pkg.ClearTempPaths()

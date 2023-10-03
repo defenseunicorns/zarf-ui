@@ -15,16 +15,17 @@ import (
 	"strings"
 
 	"github.com/defenseunicorns/zarf-ui/src/api/common"
-	globalConfig "github.com/defenseunicorns/zarf/src/config"
+	"github.com/defenseunicorns/zarf-ui/src/types"
+	zConfig "github.com/defenseunicorns/zarf/src/config"
 	"github.com/defenseunicorns/zarf/src/pkg/message"
 	"github.com/defenseunicorns/zarf/src/pkg/packager"
-	"github.com/defenseunicorns/zarf/src/types"
+	zTypes "github.com/defenseunicorns/zarf/src/types"
 	"github.com/pterm/pterm"
 )
 
 // DeployPackage deploys a package to the Zarf cluster.
 func DeployPackage(w http.ResponseWriter, r *http.Request) {
-	cfg := types.PackagerConfig{}
+	cfg := zTypes.PackagerConfig{}
 
 	var body types.APIZarfDeployPayload
 
@@ -39,7 +40,7 @@ func DeployPackage(w http.ResponseWriter, r *http.Request) {
 	}
 	cfg.PkgOpts = body.PackageOpts
 
-	globalConfig.CommonOptions.Confirm = true
+	zConfig.CommonOptions.Confirm = true
 
 	pkgClient := packager.NewOrDie(&cfg)
 	defer pkgClient.ClearTempPaths()
