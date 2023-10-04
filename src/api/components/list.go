@@ -10,12 +10,12 @@ import (
 
 	"github.com/defenseunicorns/zarf-ui/src/api/cluster"
 	"github.com/defenseunicorns/zarf-ui/src/api/common"
-	"github.com/defenseunicorns/zarf/src/config"
+	zConfig "github.com/defenseunicorns/zarf/src/config"
 	"github.com/defenseunicorns/zarf/src/config/lang"
 	"github.com/defenseunicorns/zarf/src/pkg/k8s"
 	"github.com/defenseunicorns/zarf/src/pkg/message"
 	zTypes "github.com/defenseunicorns/zarf/src/types"
-	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/v5"
 )
 
 // ListDeployedComponents writes a list of packages that have been deployed to the connected cluster.
@@ -24,17 +24,19 @@ func ListDeployedComponents(w http.ResponseWriter, r *http.Request) {
 
 	var deployedPackage = zTypes.DeployedPackage{}
 
+	// Connect to the cluster
 	k, err := k8s.New(message.Debugf, cluster.Labels)
 	if err != nil {
 		message.ErrorWebf(err, w, lang.ErrLoadPackageSecret, pkgName)
 	}
 
-	// Get the secret that describes the deployed init package
-	secret, err := k.GetSecret("zarf", config.ZarfPackagePrefix+pkgName)
+	// Get the secret that describes the deployed package
+	secret, err := k.GetSecret("zarf", zConfig.ZarfPackagePrefix+pkgName)
 	if err != nil {
 		message.ErrorWebf(err, w, lang.ErrLoadPackageSecret, pkgName)
 	}
 
+	// Unmarshal the secret into a struct
 	err = json.Unmarshal(secret.Data["data"], &deployedPackage)
 	if err != nil {
 		message.ErrorWebf(err, w, lang.ErrLoadPackageSecret, pkgName)

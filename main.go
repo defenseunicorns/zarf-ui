@@ -9,14 +9,12 @@ import (
 
 	"github.com/defenseunicorns/zarf-ui/src/cmd"
 	"github.com/defenseunicorns/zarf-ui/src/config"
-	zConfig "github.com/defenseunicorns/zarf/src/config"
 )
 
 //go:embed all:build/ui/*
 var assets embed.FS
 
 func main() {
-	zConfig.ActionsCommandZarfPrefix = "zarf"
 	config.UIAssets = assets
 	cmd.Execute()
 }
