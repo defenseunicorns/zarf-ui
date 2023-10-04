@@ -38,10 +38,8 @@
 
 	let options: APIZarfDeployPayload = {
 		packageOpts: {
-			components: requestedComponents,
-			sGetKeyPath: '',
-			packagePath: $pkgStore.path,
-			setVariables: {},
+			optionalComponents: requestedComponents,
+			packageSource: $pkgStore.path,
 		} as ZarfPackageOptions,
 	};
 
