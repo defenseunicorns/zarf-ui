@@ -30,7 +30,11 @@ UI_VERSION ?= $(if $(shell git describe --tags),$(shell git describe --tags),"Un
 CLI_VERSION ?= $(shell cat go.mod | grep "github.com/defenseunicorns/zarf " | cut -d " " -f 2)
 GIT_SHA := $(if $(shell git rev-parse HEAD),$(shell git rev-parse HEAD),"")
 BUILD_DATE := $(shell date -u +'%Y-%m-%dT%H:%M:%SZ')
-BUILD_ARGS := -s -w -X 'github.com/defenseunicorns/zarf-ui/src/config.UIVersion=$(UI_VERSION)' -X 'github.com/defenseunicorns/zarf/src/config.CLIVersion=$(CLI_VERSION)' -X 'github.com/defenseunicorns/zarf/src/config.ActionsCommandZarfPrefix=zarf' -X 'k8s.io/component-base/version.gitVersion=v0.0.0+zarf$(CLI_VERSION)' -X 'k8s.io/component-base/version.gitCommit=$(GIT_SHA)' -X 'k8s.io/component-base/version.buildDate=$(BUILD_DATE)'
+BUILD_ARGS := -s -w -X 'github.com/defenseunicorns/zarf-ui/src/config.UIVersion=$(UI_VERSION)' \
+              -X 'github.com/defenseunicorns/zarf/src/config.CLIVersion=$(CLI_VERSION)' \
+			  -X 'github.com/defenseunicorns/zarf/src/config.ActionsCommandZarfPrefix=zarf' \
+			  -X 'k8s.io/component-base/version.gitVersion=v0.0.0+zarf$(CLI_VERSION)' \
+			  -X 'k8s.io/component-base/version.gitCommit=$(GIT_SHA)' -X 'k8s.io/component-base/version.buildDate=$(BUILD_DATE)'
 .DEFAULT_GOAL := help
 
 .PHONY: help
