@@ -106,12 +106,12 @@ test-ui-dev-server:
 	API_DEV_PORT=5173 \
 		API_PORT=3333 \
 		API_TOKEN=insecure \
-		go run -ldflags="$(BUILD_ARGS)" main.go dev ui -l=trace
+		go run -ldflags="$(BUILD_ARGS)" main.go -l=trace
 
 .PHONY: test-ui-build-server
 # INTERNAL: used to start the built version of the API server for the Zarf Web UI (in CI)
 test-ui-build-server:
-	API_PORT=3333 API_TOKEN=insecure $(ZARF_UI_BIN) dev ui
+	API_PORT=3333 API_TOKEN=insecure $(ZARF_UI_BIN)
 
 # INTERNAL: used to test for new CVEs that may have been introduced
 test-cves: ensure-ui-build-dir
