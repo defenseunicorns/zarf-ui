@@ -7,7 +7,7 @@ toolchain go1.21.1
 require (
 	github.com/Masterminds/semver/v3 v3.2.1
 	github.com/alecthomas/jsonschema v0.0.0-20220216202328-9eeeec9d044b
-	github.com/defenseunicorns/zarf v0.30.0-rc1.0.20231003222545-67170fb322c5
+	github.com/defenseunicorns/zarf v0.30.0-rc2
 	github.com/go-chi/chi v4.1.2+incompatible
 	github.com/go-chi/chi/v5 v5.0.10
 	github.com/goccy/go-yaml v1.11.2
