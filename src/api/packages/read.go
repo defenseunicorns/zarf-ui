@@ -47,7 +47,9 @@ func ReadPackage(path string) (pkg types.APIZarfPackage, err error) {
 			if err != nil {
 				return err
 			}
-			return archiver.ErrStopWalk
+		}
+		if f.Name() == layout.Signature {
+			pkg.Signed = true
 		}
 
 		return nil

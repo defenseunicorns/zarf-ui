@@ -14,7 +14,7 @@ export interface APITypes {
     apiZarfPackage:            APIZarfPackage;
     apiZarfPackageConnection:  APIDeployedPackageConnection;
     apiZarfPackageConnections: APIDeployedPackageConnection[];
-    clusterSummary:            ClusterSummary;
+    clusterSummary:            APIClusterSummary;
     connectStrings:            { [key: string]: ConnectString };
     deployedPackage:           DeployedPackage;
     zarfCommonOptions:         ZarfCommonOptions;
@@ -194,6 +194,7 @@ export interface ZarfPackageOptions {
 
 export interface APIZarfPackage {
     path:        string;
+    signed:      boolean;
     zarfPackage: ZarfPackage;
 }
 
@@ -1004,7 +1005,7 @@ export interface ZarfPackageVariable {
     type?: Type;
 }
 
-export interface ClusterSummary {
+export interface APIClusterSummary {
     distro:      string;
     hasZarf:     boolean;
     k8sRevision: string;
@@ -1421,7 +1422,7 @@ const typeMap: any = {
         { json: "apiZarfPackage", js: "apiZarfPackage", typ: r("APIZarfPackage") },
         { json: "apiZarfPackageConnection", js: "apiZarfPackageConnection", typ: r("APIDeployedPackageConnection") },
         { json: "apiZarfPackageConnections", js: "apiZarfPackageConnections", typ: a(r("APIDeployedPackageConnection")) },
-        { json: "clusterSummary", js: "clusterSummary", typ: r("ClusterSummary") },
+        { json: "clusterSummary", js: "clusterSummary", typ: r("APIClusterSummary") },
         { json: "connectStrings", js: "connectStrings", typ: m(r("ConnectString")) },
         { json: "deployedPackage", js: "deployedPackage", typ: r("DeployedPackage") },
         { json: "zarfCommonOptions", js: "zarfCommonOptions", typ: r("ZarfCommonOptions") },
@@ -1484,6 +1485,7 @@ const typeMap: any = {
     ], false),
     "APIZarfPackage": o([
         { json: "path", js: "path", typ: "" },
+        { json: "signed", js: "signed", typ: true },
         { json: "zarfPackage", js: "zarfPackage", typ: r("ZarfPackage") },
     ], false),
     "ZarfPackage": o([
@@ -1687,7 +1689,7 @@ const typeMap: any = {
         { json: "sensitive", js: "sensitive", typ: u(undefined, true) },
         { json: "type", js: "type", typ: u(undefined, r("Type")) },
     ], false),
-    "ClusterSummary": o([
+    "APIClusterSummary": o([
         { json: "distro", js: "distro", typ: "" },
         { json: "hasZarf", js: "hasZarf", typ: true },
         { json: "k8sRevision", js: "k8sRevision", typ: "" },

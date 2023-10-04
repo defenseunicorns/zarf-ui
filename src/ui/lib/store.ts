@@ -8,7 +8,7 @@ import type {
 	APIPackageSBOM,
 	APIDeployedPackageConnection,
 	APIZarfPackage,
-	ClusterSummary,
+	APIClusterSummary,
 	DeployedPackage,
 } from './api-types';
 
@@ -30,7 +30,7 @@ themeStore.subscribe((theme) => {
 });
 
 // Cluster Summary Store
-const clusterStore = writable<ClusterSummary | undefined>();
+const clusterStore = writable<APIClusterSummary | undefined>();
 
 // Retrieves the cluster summary and stores it in the clusterStore
 async function updateClusterSummary(): Promise<void> {

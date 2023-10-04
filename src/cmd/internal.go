@@ -9,9 +9,9 @@ import (
 	"fmt"
 
 	"github.com/alecthomas/jsonschema"
+	"github.com/defenseunicorns/zarf-ui/src/types"
 	"github.com/defenseunicorns/zarf/src/config/lang"
 	"github.com/defenseunicorns/zarf/src/pkg/message"
-	"github.com/defenseunicorns/zarf/src/types"
 	"github.com/spf13/cobra"
 )
 

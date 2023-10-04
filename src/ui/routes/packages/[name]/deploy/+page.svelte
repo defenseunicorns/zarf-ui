@@ -43,6 +43,11 @@
 		} as ZarfPackageOptions,
 	};
 
+	// TODO (@WSTARR) - For now if a package is signed, assume it uses the Zarf key
+	if ($pkgStore.signed) {
+		options.packageOpts.publicKeyPath = "https://zarf.dev/cosign.pub"
+	}
+
 	if (isInitPkg) {
 		options.initOpts = {
 			applianceMode: false,

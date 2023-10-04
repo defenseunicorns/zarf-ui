@@ -6,7 +6,7 @@ import type {
 	APIPackageSBOM,
 	APIZarfDeployPayload,
 	APIZarfPackage,
-	ClusterSummary,
+	APIClusterSummary,
 	DeployedComponent,
 	DeployedPackage,
 	ZarfState,
@@ -28,7 +28,7 @@ const Auth = {
 };
 
 const Cluster = {
-	summary: () => http.get<ClusterSummary>('/cluster'),
+	summary: () => http.get<APIClusterSummary>('/cluster'),
 	state: {
 		read: () => http.get<ZarfState>('/state'),
 		update: (body: ZarfState) => http.patch<ZarfState>('/state', body),

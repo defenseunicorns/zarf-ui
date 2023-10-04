@@ -41,6 +41,7 @@ type APIClusterSummary struct {
 // APIZarfPackage represents a ZarfPackage and its path for the API.
 type APIZarfPackage struct {
 	Path        string             `json:"path"`
+	Signed      bool               `json:"signed"`
 	ZarfPackage zTypes.ZarfPackage `json:"zarfPackage"`
 }
 
