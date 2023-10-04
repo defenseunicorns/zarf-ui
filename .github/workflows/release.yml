@@ -58,24 +58,11 @@ jobs:
           path: src/ui/playwright-report/
           retention-days: 30
 
-      # Set up AWS credentials for GoReleaser to upload backups of artifacts to S3
-      - name: Set AWS Credentials
-        uses: aws-actions/configure-aws-credentials@8c3f20df09ac63af7b3ae3d7c91f105f857d8497 # v4.0.0
-        with:
-          aws-access-key-id: ${{ secrets.AWS_GOV_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_GOV_SECRET_ACCESS_KEY }}
-          aws-region: us-gov-west-1
-
-      - name: Skip brew latest for pre-release tags and setup CLI version
+      - name: Setup the CLI version
         run: |
-          if [[ $GITHUB_REF_NAME == *"rc"* ]]; then
-            echo "BREW_NAME=zarf-ui@latest-rc" >> $GITHUB_ENV
-          else
-            echo "BREW_NAME=zarf-ui" >> $GITHUB_ENV
-          fi
           echo ZARF_CLI_VERSION=$(cat go.mod | grep "github.com/defenseunicorns/zarf " | cut -d " " -f 2) >> $GITHUB_ENV
 
-      # Create the GitHub release notes, upload artifact backups to S3, publish homebrew recipe
+      # Create the GitHub release notes, and publish built artifacts
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@5fdedb94abba051217030cc86d4523cf3f02243d # v4.6.0
         with:
@@ -84,7 +71,6 @@ jobs:
           args: release --rm-dist --debug
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN}}
-          HOMEBREW_TAP_GITHUB_TOKEN: ${{ secrets.ZARF_ORG_PROJECT_TOKEN }}
 
       - name: Save CVE report
         uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32 # v3.1.3
