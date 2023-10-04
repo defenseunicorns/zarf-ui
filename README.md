@@ -13,9 +13,8 @@ Zarf eliminates the [complexity of air gap software delivery](https://www.itopst
 - [Zarf Overview](https://docs.zarf.dev/docs/zarf-overview)
 - [Zarf Repo](https://github.com/defenseunicorns/Zarf)
 
-
 ## The Zarf Web UI
 
-This repository contains the Zarf Web UI for interacting with Zarf packages and clusters through your web browser instead of the CLI!  To use it simply double click the binary or run `./zarf-ui`.
+This repository contains the Zarf Web UI for interacting with Zarf packages and clusters through your web browser instead of the CLI!  To use it simply double click the binary or run the root command from your command line.
 
-
+![Zarf UI Screenshot](./.images/screenshot.png)
