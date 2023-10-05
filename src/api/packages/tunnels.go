@@ -40,14 +40,14 @@ func ListConnections(w http.ResponseWriter, _ *http.Request) {
 			allConnections[name] = append(allConnections[name], pkgTunnel.Connection)
 		}
 	}
-	common.WriteJSONResponse(w, "", http.StatusOK)
+	common.WriteJSONResponse(w, allConnections, http.StatusOK)
 }
 
 // ListPackageConnections lists all tunnel names
 func ListPackageConnections(w http.ResponseWriter, r *http.Request) {
 	pkgName := chi.URLParam(r, "pkg")
 	if tunnels[pkgName] == nil {
-		message.ErrorWebf(errors.New("No tunnels for package %s"), w, pkgName)
+		message.ErrorWebf(errors.New("no tunnels for package %s"), w, pkgName)
 		return
 	}
 	pkgTunnels := make(types.APIDeployedPackageConnections, 0, len(tunnels[pkgName]))
@@ -55,7 +55,7 @@ func ListPackageConnections(w http.ResponseWriter, r *http.Request) {
 		pkgTunnels = append(pkgTunnels, pkgTunnel.Connection)
 	}
 
-	common.WriteJSONResponse(w, "", http.StatusOK)
+	common.WriteJSONResponse(w, pkgTunnels, http.StatusOK)
 }
 
 // ConnectTunnel establishes a tunnel for the requested resource
@@ -117,7 +117,7 @@ func ConnectTunnel(w http.ResponseWriter, r *http.Request) {
 			URL:  url,
 		},
 	}
-	common.WriteJSONResponse(w, "", http.StatusCreated)
+	common.WriteJSONResponse(w, tunnels[pkgName][connectionName].Connection, http.StatusCreated)
 }
 
 // DisconnectTunnel closes the tunnel for the requested resource
@@ -126,7 +126,7 @@ func DisconnectTunnel(w http.ResponseWriter, r *http.Request) {
 	connectionName := chi.URLParam(r, "name")
 	pkgTunnel := tunnels[pkgName][connectionName]
 	if pkgTunnel.tunnel == nil {
-		message.ErrorWebf(errors.New("Tunnel not found"), w, "Failed to disconnect from %s", connectionName)
+		message.ErrorWebf(errors.New("tunnel not found"), w, "Failed to disconnect from %s", connectionName)
 		return
 	}
 
