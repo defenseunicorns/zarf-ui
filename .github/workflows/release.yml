@@ -59,6 +59,10 @@ jobs:
           path: src/ui/playwright-report/
           retention-days: 30
 
+      # After we run the tests we need to aggressively cleanup files to reduce disk pressure
+      - name: Cleanup files
+        uses: ./.github/actions/cleanup-files
+
       - name: Setup the CLI version
         run: |
           echo ZARF_CLI_VERSION=$(cat go.mod | grep "github.com/defenseunicorns/zarf " | cut -d " " -f 2) >> $GITHUB_ENV
