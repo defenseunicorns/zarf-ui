@@ -11,7 +11,8 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
-    needs: build
+    permissions:
+      contents: write
     steps:
       # Checkout the repo and setup the tooling for this job
       - name: Checkout
