@@ -24,12 +24,12 @@ var internalCmd = &cobra.Command{
 
 var apiSchemaCmd = &cobra.Command{
 	Use:   "api-schema",
-	Short: lang.CmdInternalAPISchemaShort,
+	Short: "Creates auto-generated json schema for the API of the Zarf UI",
 	Run: func(cmd *cobra.Command, args []string) {
 		schema := jsonschema.Reflect(&types.RestAPI{})
 		output, err := json.MarshalIndent(schema, "", "  ")
 		if err != nil {
-			message.Fatal(err, lang.CmdInternalAPISchemaGenerateErr)
+			message.Fatalf(err, "Failed to marshal the JSON schema: %s", err.Error())
 		}
 		fmt.Print(string(output) + "\n")
 	},

@@ -250,11 +250,6 @@ export interface ZarfBuildData {
      */
     migrations?: string[];
     /**
-     * Map of components that were imported via OCI. The keys are OCI Package URLs and values
-     * are the component names
-     */
-    OCIImportedComponents?: { [key: string]: string };
-    /**
      * Any registry domains that were overridden on package create when pulling images
      */
     registryOverrides?: { [key: string]: string };
@@ -312,7 +307,7 @@ export interface ZarfComponent {
     files?: ZarfFile[];
     /**
      * [Deprecated] Create a user selector field based on all components in the same group. This
-     * will be removed in Zarf v1.0.0.
+     * will be removed in Zarf v1.0.0. Consider using 'only.flavor' instead.
      */
     group?: string;
     /**
@@ -804,6 +799,11 @@ export interface ZarfComponentOnlyTarget {
      */
     cluster?: ZarfComponentOnlyCluster;
     /**
+     * Only include this component when a matching '--flavor' is specified on 'zarf package
+     * create'
+     */
+    flavor?: string;
+    /**
      * Only deploy component to specified OS
      */
     localOS?: LocalOS;
@@ -1200,6 +1200,10 @@ export interface ZarfCreateOptions {
      */
     differential: DifferentialData;
     /**
+     * An optional variant that controls which components will be included in a package
+     */
+    flavor: string;
+    /**
      * Size of chunks to use when splitting a zarf package into multiple files in megabytes
      */
     maxPackageSizeMB: number;
@@ -1244,7 +1248,6 @@ export interface ZarfCreateOptions {
  */
 export interface DifferentialData {
     DifferentialImages:         { [key: string]: boolean };
-    DifferentialOCIComponents:  { [key: string]: string };
     DifferentialPackagePath:    string;
     DifferentialPackageVersion: string;
     DifferentialRepos:          { [key: string]: boolean };
@@ -1502,7 +1505,6 @@ const typeMap: any = {
         { json: "differentialMissing", js: "differentialMissing", typ: u(undefined, a("")) },
         { json: "lastNonBreakingVersion", js: "lastNonBreakingVersion", typ: u(undefined, "") },
         { json: "migrations", js: "migrations", typ: u(undefined, a("")) },
-        { json: "OCIImportedComponents", js: "OCIImportedComponents", typ: u(undefined, m("")) },
         { json: "registryOverrides", js: "registryOverrides", typ: u(undefined, m("")) },
         { json: "terminal", js: "terminal", typ: "" },
         { json: "timestamp", js: "timestamp", typ: "" },
@@ -1643,6 +1645,7 @@ const typeMap: any = {
     ], false),
     "ZarfComponentOnlyTarget": o([
         { json: "cluster", js: "cluster", typ: u(undefined, r("ZarfComponentOnlyCluster")) },
+        { json: "flavor", js: "flavor", typ: u(undefined, "") },
         { json: "localOS", js: "localOS", typ: u(undefined, r("LocalOS")) },
     ], false),
     "ZarfComponentOnlyCluster": o([
@@ -1816,6 +1819,7 @@ const typeMap: any = {
     "ZarfCreateOptions": o([
         { json: "baseDir", js: "baseDir", typ: "" },
         { json: "differential", js: "differential", typ: r("DifferentialData") },
+        { json: "flavor", js: "flavor", typ: "" },
         { json: "maxPackageSizeMB", js: "maxPackageSizeMB", typ: 0 },
         { json: "output", js: "output", typ: "" },
         { json: "registryOverrides", js: "registryOverrides", typ: m("") },
@@ -1828,7 +1832,6 @@ const typeMap: any = {
     ], false),
     "DifferentialData": o([
         { json: "DifferentialImages", js: "DifferentialImages", typ: m(true) },
-        { json: "DifferentialOCIComponents", js: "DifferentialOCIComponents", typ: m("") },
         { json: "DifferentialPackagePath", js: "DifferentialPackagePath", typ: "" },
         { json: "DifferentialPackageVersion", js: "DifferentialPackageVersion", typ: "" },
         { json: "DifferentialRepos", js: "DifferentialRepos", typ: m(true) },
