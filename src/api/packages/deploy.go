@@ -39,6 +39,9 @@ func DeployPackage(w http.ResponseWriter, r *http.Request) {
 		cfg.InitOpts = *body.InitOpts
 	}
 	cfg.PkgOpts = body.PackageOpts
+	cfg.DeployOpts = zTypes.ZarfDeployOptions{
+		Timeout: zConfig.ZarfDefaultHelmTimeout,
+	}
 
 	zConfig.CommonOptions.Confirm = true
 
