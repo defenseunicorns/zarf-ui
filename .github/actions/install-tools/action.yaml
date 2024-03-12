@@ -4,7 +4,7 @@ description: "Install pipeline tools"
 runs:
   using: composite
   steps:
-    - uses: anchore/sbom-action/download-syft@fd74a6fb98a204a1ad35bbfae0122c1a302ff88b # v0.15.0
+    - uses: anchore/sbom-action/download-syft@9fece9e20048ca9590af301449208b2b8861333b # v0.15.9
 
     - run: "curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin --tag v0.64.2"
       shell: bash
